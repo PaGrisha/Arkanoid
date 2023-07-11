@@ -4,6 +4,8 @@ mw = pygame.display.set_mode((500, 500))
 back = (200, 255, 255)
 mw.fill(back)
 WHITE = (255, 255, 255)
+WIN_COLOR= (0, 200, 0)
+LOSE_COLOR= (255, 0, 0)
 # переменные, отвечающие за координаты платформы
 racket_x = 200
 racket_y = 330
@@ -12,6 +14,8 @@ move_left = False
 speed_x = 1
 speed_y = 1
 game_over = False
+
+
 
 
 class Area:
@@ -34,6 +38,7 @@ class Area:
     def collidrect(self, rect):
         return self.rect.colliderect(rect)
 
+
 class Picture(Area):
     def __init__(self, filename, x = 0, y = 0, width = 10, height = 10):
         Area.__init__(self, x=x, y=y, width=width, height=height, color=None)
@@ -44,6 +49,17 @@ class Picture(Area):
 
     def set_color(self):
         self.image.set_colorkey(WHITE)
+
+
+class Label(Area):
+
+    def set_text(self, text, fsize=12, text_color=(0, 0, 0)):
+        self.image = pygame.font.SysFont('verdana', fsize).render(text, True, text_color)
+
+    def draw(self, shift_x=0, shift_y=0):
+        self.fill()
+        mw.blit(self.image, (self.rect.x + shift_x, self.rect.y + shift_y))
+
 
 
 ball = Picture('ball.png', 160, 200, 50, 50)
@@ -83,8 +99,15 @@ while not game_over:
         speed_x *= -1
     if ball.rect.y < 0:
         speed_y *= -1
-    if ball.rect.y > 350:
-        #дописать из картинки в сакйп
+    if len(monsters) == 0:
+        time_text = Label(150, 150, 50, 50, back)
+        time_text.set_text('YOU WIN', 60, WIN_COLOR)
+        time_text.draw(10, 10)
+        game_over = True
+    if ball.rect.y > (racket_y + 20):
+        time_text = Label(150, 150, 50, 50, back)
+        time_text.set_text('YOU LOSE', 60, LOSE_COLOR)
+        time_text.draw(10, 10)
         game_over = True
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
