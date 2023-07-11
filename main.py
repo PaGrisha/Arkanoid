@@ -7,6 +7,11 @@ WHITE = (255, 255, 255)
 # переменные, отвечающие за координаты платформы
 racket_x = 200
 racket_y = 330
+move_right = False
+move_left = False
+speed_x = 1
+speed_y = 1
+game_over = False
 
 
 class Area:
@@ -26,6 +31,8 @@ class Area:
     def collidepoint(self, x, y):
         return self.rect.collidepoint(x, y)
 
+    def collidrect(self, rect):
+        return self.rect.colliderect(rect)
 
 class Picture(Area):
     def __init__(self, filename, x = 0, y = 0, width = 10, height = 10):
@@ -49,19 +56,53 @@ for j in range(3):
     y = start_y + (55 * j)
     x = start_x + (27.5 * j)
     for i in range(count):
-        d = Picture('anonim kosta.png', x, y, 50, 50)
+        d = Picture('enemi.png', x, y, 50, 50)
         monsters.append(d)
         x = x + 55
     count = count - 1
-while True:
+while not game_over:
     ball.set_color()
     ball.fill()
     ball.draw()
-    platform.set_color()
-    platform.fill()
+    #platform.set_color()
     platform.draw()
+    platform.fill()
     for f in monsters:
         f.set_color()
         f.fill()
         f.draw()
+        if f.rect.colliderect(ball.rect):
+            monsters.remove(f)
+            f.fill()
+            speed_y *= -1
+    ball.rect.x += speed_x
+    ball.rect.y += speed_y
+    if ball.rect.colliderect(platform):
+        speed_y *= -1
+    if ball.rect.x > 450 or ball.rect.x < 0:
+        speed_x *= -1
+    if ball.rect.y < 0:
+        speed_y *= -1
+    if ball.rect.y > 350:
+        #дописать из картинки в сакйп
+        game_over = True
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_over = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_d:
+                move_right = True
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_d:
+                move_right = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                move_left = True
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_a:
+                move_left = False
+    if move_left:
+        platform.rect.x -= 3
+    if move_right:
+        platform.rect.x += 3
     pygame.display.update()
