@@ -4,8 +4,8 @@ mw = pygame.display.set_mode((500, 500))
 back = (200, 255, 255)
 mw.fill(back)
 WHITE = (255, 255, 255)
-WIN_COLOR= (0, 200, 0)
-LOSE_COLOR= (255, 0, 0)
+WIN_COLOR = (0, 200, 0)
+LOSE_COLOR = (255, 0, 0)
 # переменные, отвечающие за координаты платформы
 racket_x = 200
 racket_y = 330
